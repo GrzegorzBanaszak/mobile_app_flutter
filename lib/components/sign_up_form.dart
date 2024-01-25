@@ -5,6 +5,7 @@ import 'package:mobile_app/pages/home.dart';
 import 'package:mobile_app/utilis/my_colors.dart';
 import 'package:mobile_app/utilis/validators.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -50,19 +51,21 @@ class _SignUpFormState extends State<SignUpForm> {
           // ignore: inference_failure_on_instance_creation
           context, MaterialPageRoute(builder: (context) => const Home()),
         );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.red[800],
-                fontWeight: FontWeight.bold,
+      } on DatabaseException catch (e) {
+        if (e.getResultCode() == 2067) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'User on this email exist',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red[800],
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }
       }
     } else if (_formKey.currentState!.validate() &&
         passwordController.text != rePasswordController.text) {
