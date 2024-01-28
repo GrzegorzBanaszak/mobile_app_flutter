@@ -18,7 +18,7 @@ class User {
       'id': id,
       'fullName': fullName,
       'email': email,
-      'password': password
+      'password': password,
     };
   }
 

@@ -1,3 +1,4 @@
+import 'package:mobile_app/db/todo_db.dart';
 import 'package:mobile_app/db/user_db.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -27,11 +28,21 @@ class DatabaseService {
       path,
       version: 1,
       onCreate: create,
+      onUpgrade: upgrade,
       singleInstance: true,
     );
     return database;
   }
 
-  Future<void> create(Database database, int version) async =>
-      await UserDB().createTable(database);
+  Future<void> create(Database database, int version) async {
+    await UserDB().createTable(database);
+    await TodoDB().createTable(database);
+  }
+
+  Future<void> upgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < newVersion) {
+      await UserDB().createTable(db);
+      await TodoDB().createTable(db);
+    }
+  }
 }
